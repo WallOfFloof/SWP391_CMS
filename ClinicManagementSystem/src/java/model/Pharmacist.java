@@ -11,22 +11,16 @@ import java.time.LocalDate;
 public class Pharmacist {
     private int ID;
     private String name;
-    private LocalDate dateOfBirth;
-    private String SSiD;
-    private String address;
-    private String email;
+    private int account_pharmacist_id;
     private String mobile;
 
     public Pharmacist() {
     }
 
-    public Pharmacist(int ID, String name, LocalDate dateOfBirth, String SSiD, String address, String email, String mobile) {
+    public Pharmacist(int ID, String name, int account_pharmacist_id, String mobile) {
         this.ID = ID;
         this.name = name;
-        this.dateOfBirth = dateOfBirth;
-        this.SSiD = SSiD;
-        this.address = address;
-        this.email = email;
+        this.account_pharmacist_id = account_pharmacist_id;
         this.mobile = mobile;
     }
 
@@ -46,36 +40,12 @@ public class Pharmacist {
         this.name = name;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
+    public int getAccount_pharmacist_id() {
+        return account_pharmacist_id;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getSSiD() {
-        return SSiD;
-    }
-
-    public void setSSiD(String SSiD) {
-        this.SSiD = SSiD;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAccount_pharmacist_id(int account_pharmacist_id) {
+        this.account_pharmacist_id = account_pharmacist_id;
     }
 
     public String getMobile() {
@@ -85,6 +55,8 @@ public class Pharmacist {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
+
+    
     
     //validate
     
