@@ -149,7 +149,10 @@ INSERT INTO ImportInfo (
 INSERT INTO [Role] (RoleID, RoleName) VALUES
 (1, 'Admin'),
 (2, 'Pharmacist'),
-(3, 'Manager');
+(3, 'Manager'),
+(4, 'Patient'),
+(5, 'Doctor'),
+(6, 'Receptionist');
 
 
 INSERT INTO Account (AccountID, AccountName, [Password], RoleID) VALUES
