@@ -11,35 +11,35 @@ import java.time.LocalDate;
 public class Medicine {
     private int ID; 
     private String name;
-    private int categoryCode;
+    private int categoryID;
     private int amount;
     private float price;
     private String Ingredient;
-    private String Dosage; 
     private String Usage; 
     private String Preservation; 
-    private String Caution; 
     private LocalDate expiration_date;
     private LocalDate manufacture_date;
-    private int unitCode;
+    private int quantity;
+    private int unitID;
+    private int warehouseID;
     
     public Medicine() {
     }
-    
-    public Medicine(int ID, String name, int categoryCode, int amount, float price, String Ingredient, String Dosage, String Usage, String Preservation, String Caution, LocalDate expiration_date, LocalDate manufacture_date, int unitCode) {
+
+    public Medicine(int ID, String name, int categoryID, int amount, float price, String Ingredient, String Usage, String Preservation, LocalDate expiration_date, LocalDate manufacture_date, int quantity, int unitID, int warehouseID) {
         this.ID = ID;
         this.name = name;
-        this.categoryCode = categoryCode;
+        this.categoryID = categoryID;
         this.amount = amount;
         this.price = price;
         this.Ingredient = Ingredient;
-        this.Dosage = Dosage;
         this.Usage = Usage;
         this.Preservation = Preservation;
-        this.Caution = Caution;
         this.expiration_date = expiration_date;
         this.manufacture_date = manufacture_date;
-        this.unitCode = unitCode;
+        this.quantity = quantity;
+        this.unitID = unitID;
+        this.warehouseID = warehouseID;
     }
 
     public int getID() {
@@ -58,12 +58,12 @@ public class Medicine {
         this.name = name;
     }
 
-    public int getCategoryCode() {
-        return categoryCode;
+    public int getCategoryID() {
+        return categoryID;
     }
 
-    public void setCategoryCode(int categoryCode) {
-        this.categoryCode = categoryCode;
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
 
     public int getAmount() {
@@ -90,14 +90,6 @@ public class Medicine {
         this.Ingredient = Ingredient;
     }
 
-    public String getDosage() {
-        return Dosage;
-    }
-
-    public void setDosage(String Dosage) {
-        this.Dosage = Dosage;
-    }
-
     public String getUsage() {
         return Usage;
     }
@@ -112,14 +104,6 @@ public class Medicine {
 
     public void setPreservation(String Preservation) {
         this.Preservation = Preservation;
-    }
-
-    public String getCaution() {
-        return Caution;
-    }
-
-    public void setCaution(String Caution) {
-        this.Caution = Caution;
     }
 
     public LocalDate getExpiration_date() {
@@ -138,13 +122,31 @@ public class Medicine {
         this.manufacture_date = manufacture_date;
     }
 
-    public int getUnitCode() {
-        return unitCode;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setUnitCode(int unitCode) {
-        this.unitCode = unitCode;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
+
+    public int getUnitID() {
+        return unitID;
+    }
+
+    public void setUnitID(int unitID) {
+        this.unitID = unitID;
+    }
+
+    public int getWarehouseID() {
+        return warehouseID;
+    }
+
+    public void setWarehouseID(int warehouseID) {
+        this.warehouseID = warehouseID;
+    }
+    
+    
 
     
     
