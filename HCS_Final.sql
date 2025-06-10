@@ -49,6 +49,8 @@ CREATE TABLE Doctor (
     phone NVARCHAR(20),
     eduLevel NVARCHAR(50),
     account_staff_id INT UNIQUE,
+    availability CHAR(1) NOT NULL DEFAULT 'A'
+    CHECK (availability IN ('A', 'U'))
     FOREIGN KEY (account_staff_id) REFERENCES AccountStaff(account_staff_id)
 );
 
