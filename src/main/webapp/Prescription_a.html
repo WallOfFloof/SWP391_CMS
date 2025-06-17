@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách đơn thuốc - PrescriptionView</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #333; padding: 8px 12px; text-align: left; }
+        th { background: #eee; }
+        #search-row { margin-bottom: 20px; }
+        #search-row label { margin-right: 15px; }
+        #error-msg { color: red; margin-left: 15px; }
+        #search-row input, #search-row select { padding: 2px 6px; }
+        button { padding: 4px 12px; }
+    </style>
+</head>
+<body>
+<h2>Danh sách đơn thuốc (PrescriptionView)</h2>
+<div id="search-row">
+    <label>
+        Tên bệnh nhân:
+        <input id="search-patient-name" autocomplete="off" />
+    </label>
+    <label>
+        Tên bác sĩ:
+        <input id="search-doctor-name" autocomplete="off" />
+    </label>
+    <label>
+        Trạng thái:
+        <select id="search-status">
+            <option value="">--Tất cả--</option>
+            <option value="Pending">Pending</option>
+            <option value="Dispensed">Dispensed</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+    </label>
+    <label>
+        Sắp xếp:
+        <select id="search-sort">
+            <option value="desc">Mới nhất</option>
+            <option value="asc">Cũ nhất</option>
+        </select>
+    </label>
+    <button onclick="fetchPrescriptions()">Tìm kiếm</button>
+    <button onclick="fetchPrescriptions(true)">Tải lại toàn bộ</button>
+    <span id="error-msg"></span>
+</div>
+<table id="prescription-table">
+    <thead>
+    <tr>
+        <th>ID Đơn thuốc</th>
+        <th>Bệnh nhân</th>
+        <th>Bác sĩ</th>
+        <th>Ngày kê đơn</th>
+        <th>Tổng tiền (VNĐ)</th>
+        <th>Trạng thái</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Data sẽ render ở đây -->
+    </tbody>
+</table>
+
+<script>
+    const API_URL = "http://localhost:8080/ClinicManagementSystem_war_exploded/api/prescription-views";
+
+    function fetchPrescriptions(isReload = false) {
+        document.getElementById("error-msg").innerText = '';
+        let params = [];
+        if (!isReload) {
+            let patientName = document.getElementById("search-patient-name").value.trim();
+            let doctorName = document.getElementById("search-doctor-name").value.trim();
+            let status = document.getElementById("search-status").value;
+            let sort = document.getElementById("search-sort").value;
+            if (patientName) params.push("patientName=" + encodeURIComponent(patientName));
+            if (doctorName) params.push("doctorName=" + encodeURIComponent(doctorName));
+            if (status) params.push("status=" + encodeURIComponent(status));
+            if (sort) params.push("sort=" + encodeURIComponent(sort));
+        }
+        let url = API_URL;
+        if (params.length > 0) url += "?" + params.join("&");
+        fetch(url)
+            .then(res => {
+                if (!res.ok) throw new Error("API error");
+                return res.json();
+            })
+            .then(data => renderTable(data))
+            .catch(err => {
+                document.getElementById("error-msg").innerText = "Không lấy được dữ liệu: " + err.message;
+            });
+    }
+
+    function renderTable(data) {
+        const tbody = document.querySelector("#prescription-table tbody");
+        tbody.innerHTML = "";
+        if (!data || data.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='6'>Không có dữ liệu</td></tr>";
+            return;
+        }
+        data.forEach(item => {
+            const date = item.prescriptionDate ? new Date(item.prescriptionDate).toLocaleDateString('vi-VN') : "";
+            const row = `
+                    <tr>
+                        <td>${item.prescriptionId}</td>
+                        <td>${item.patientName}</td>
+                        <td>${item.doctorName}</td>
+                        <td>${date}</td>
+                        <td>${item.totalAmount?.toLocaleString("vi-VN") ?? 0}</td>
+                        <td>${item.status}</td>
+                    </tr>
+                `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Tải danh sách ngay khi vừa vào trang
+    window.onload = () => fetchPrescriptions(true);
+
+    // Cho phép nhấn Enter để tìm kiếm nhanh
+    ["search-patient-name", "search-doctor-name"].forEach(id => {
+        document.getElementById(id).addEventListener("keypress", function(e) {
+            if (e.key === "Enter") fetchPrescriptions();
+        });
+    });
+    document.getElementById("search-status").addEventListener("change", function() { fetchPrescriptions(); });
+    document.getElementById("search-sort").addEventListener("change", function() { fetchPrescriptions(); });
+</script>
+</body>
+</html>
