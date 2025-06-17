@@ -45,40 +45,34 @@ public class MedicineServlet extends HttpServlet {
 
     // GET: lấy tất cả thuốc hoặc chi tiết 1 thuốc
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-        PrintWriter out = resp.getWriter();
-        String pathInfo = req.getPathInfo();
+        resp.setCharacterEncoding("UTF-8");
 
-        if (pathInfo == null || pathInfo.equals("/")) {
-            // Lấy tất cả thuốc
-            List<Medicine> medicines = dao.getAllMedicines();
-            Map<String, Object> result = new HashMap<>();
-            result.put("total", medicines.size());
-            result.put("data", medicines);
-            out.print(gson.toJson(result));
+        String keyword = req.getParameter("keyword");
+        String categoryIdStr = req.getParameter("categoryId");
+        String limitStr = req.getParameter("limit");
+        String offsetStr = req.getParameter("offset");
+
+        Integer categoryId = (categoryIdStr != null && !categoryIdStr.isEmpty()) ? Integer.parseInt(categoryIdStr) : null;
+        int limit = (limitStr != null && !limitStr.isEmpty()) ? Integer.parseInt(limitStr) : 20; // default 20
+        int offset = (offsetStr != null && !offsetStr.isEmpty()) ? Integer.parseInt(offsetStr) : 0; // default 0
+
+        MedicineDAO dao = new MedicineDAO();
+        List<Medicine> medicines;
+
+        // Nếu có filter
+        if ((keyword != null && !keyword.trim().isEmpty()) || categoryId != null) {
+            medicines = dao.searchMedicines(keyword, categoryId, limit, offset);
         } else {
-            // Lấy thuốc theo ID
-            String[] splits = pathInfo.split("/");
-            if (splits.length == 2) {
-                try {
-                    int id = Integer.parseInt(splits[1]);
-                    Medicine med = dao.getMedicineById(id);
-                    if (med != null) {
-                        out.print(gson.toJson(med));
-                    } else {
-                        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        out.print("{\"error\":\"Medicine not found\"}");
-                    }
-                } catch (NumberFormatException e) {
-                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    out.print("{\"error\":\"Invalid ID\"}");
-                }
-            }
+            // LẤY CÓ PHÂN TRANG, KHÔNG DÙNG getAllMedicines() NỮA!
+            medicines = dao.getAllMedicines(limit, offset);
         }
-        out.flush();
-    }
 
+        // JSON trả về FE
+        String json = gson.toJson(medicines);
+        resp.getWriter().write(json);
+    }
     // POST: thêm thuốc mới
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
