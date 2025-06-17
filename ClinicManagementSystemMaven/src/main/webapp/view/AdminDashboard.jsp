@@ -264,7 +264,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link " aria-current="page"
-                               href="./products.html">
+                               href="./Medicine.jsp">
                                 <i class="icon" data-bs-toggle="tooltip" title="Products" data-bs-placement="right">
                                     <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd"
