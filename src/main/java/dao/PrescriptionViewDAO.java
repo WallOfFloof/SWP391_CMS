@@ -77,7 +77,7 @@ public class PrescriptionViewDAO {
         return list;
     }
     public List<PrescriptionView> searchPrescriptionViews(
-            String patientName, String doctorName, String status, String sort // sort: "asc" hoặc "desc"
+            Integer prescriptionId, String patientName, String doctorName, String status, String sort
     ) {
         List<PrescriptionView> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
@@ -91,6 +91,10 @@ public class PrescriptionViewDAO {
                         "LEFT JOIN Invoice i ON pi.invoice_id = i.invoice_id WHERE 1=1 "
         );
         List<Object> params = new ArrayList<>();
+        if (prescriptionId != null) {
+            sql.append("AND p.prescription_id = ? ");
+            params.add(prescriptionId);
+        }
         if (patientName != null && !patientName.trim().isEmpty()) {
             sql.append("AND pt.full_name LIKE ? ");
             params.add("%" + patientName.trim() + "%");
@@ -103,13 +107,8 @@ public class PrescriptionViewDAO {
             sql.append("AND p.status = ? ");
             params.add(status.trim());
         }
-        // Sắp xếp theo ngày kê đơn (default DESC)
         sql.append("ORDER BY p.prescription_date ");
-        if ("asc".equalsIgnoreCase(sort)) {
-            sql.append("ASC");
-        } else {
-            sql.append("DESC");
-        }
+        if ("asc".equalsIgnoreCase(sort)) sql.append("ASC"); else sql.append("DESC");
 
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
@@ -132,5 +131,6 @@ public class PrescriptionViewDAO {
         }
         return list;
     }
+
 
 }

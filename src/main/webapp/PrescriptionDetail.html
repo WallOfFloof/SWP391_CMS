@@ -1,8 +1,8 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách đơn thuốc - PrescriptionView</title>
+    <title>Chi tiết đơn thuốc</title>
     <style>
         body { font-family: Arial; margin: 40px; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
@@ -16,49 +16,38 @@
     </style>
 </head>
 <body>
-<h2>Danh sách đơn thuốc (PrescriptionView)</h2>
+<h2>Chi tiết đơn thuốc (PrescriptionDetailView)</h2>
 <div id="search-row">
     <label>
         ID đơn thuốc:
-        <input id="search-pres-id" type="number" min="1" autocomplete="off"/>
+        <input id="search-pres-id" type="number" min="1" autocomplete="off" />
     </label>
     <label>
         Tên bệnh nhân:
         <input id="search-patient-name" autocomplete="off" />
     </label>
     <label>
-        Tên bác sĩ:
-        <input id="search-doctor-name" autocomplete="off" />
-    </label>
-    <label>
-        Trạng thái:
-        <select id="search-status">
-            <option value="">--Tất cả--</option>
-            <option value="Pending">Pending</option>
-            <option value="Dispensed">Dispensed</option>
-            <option value="Cancelled">Cancelled</option>
-        </select>
-    </label>
-    <label>
-        Sắp xếp:
+        Sắp xếp ngày:
         <select id="search-sort">
             <option value="desc">Mới nhất</option>
             <option value="asc">Cũ nhất</option>
         </select>
     </label>
-    <button onclick="fetchPrescriptions()">Tìm kiếm</button>
-    <button onclick="fetchPrescriptions(true)">Tải lại toàn bộ đơn thuốc</button>
+    <button onclick="fetchDetails()">Tìm kiếm</button>
+    <button onclick="fetchDetails(true)">Tải lại toàn bộ</button>
     <span id="error-msg"></span>
 </div>
-<table id="prescription-table">
+<table id="detail-table">
     <thead>
     <tr>
-        <th>ID đơn thuốc</th>
+        <th>ID Đơn thuốc</th>
         <th>Bệnh nhân</th>
-        <th>Bác sĩ</th>
         <th>Ngày kê đơn</th>
-        <th>Tổng tiền (VNĐ)</th>
-        <th>Trạng thái</th>
+        <th>Tên thuốc</th>
+        <th>Đơn giá (VNĐ)</th>
+        <th>Số lượng</th>
+        <th>Liều dùng</th>
+        <th>Thành tiền (VNĐ)</th>
     </tr>
     </thead>
     <tbody>
@@ -66,23 +55,18 @@
     </tbody>
 </table>
 
-
 <script>
-    const API_URL = "http://localhost:8080/ClinicManagementSystem_war_exploded/api/prescription-views";
+    const API_URL = "http://localhost:8080/ClinicManagementSystem_war_exploded/api/prescription-detail-views";
 
-    function fetchPrescriptions(isReload = false) {
+    function fetchDetails(isReload = false) {
         document.getElementById("error-msg").innerText = '';
         let params = [];
         if (!isReload) {
             let presId = document.getElementById("search-pres-id").value.trim();
             let patientName = document.getElementById("search-patient-name").value.trim();
-            let doctorName = document.getElementById("search-doctor-name").value.trim();
-            let status = document.getElementById("search-status").value;
             let sort = document.getElementById("search-sort").value;
             if (presId) params.push("prescriptionId=" + encodeURIComponent(presId));
             if (patientName) params.push("patientName=" + encodeURIComponent(patientName));
-            if (doctorName) params.push("doctorName=" + encodeURIComponent(doctorName));
-            if (status) params.push("status=" + encodeURIComponent(status));
             if (sort) params.push("sort=" + encodeURIComponent(sort));
         }
         let url = API_URL;
@@ -99,48 +83,51 @@
     }
 
     function renderTable(data) {
-        const tbody = document.querySelector("#prescription-table tbody");
+        const tbody = document.querySelector("#detail-table tbody");
         tbody.innerHTML = "";
         if (!data || data.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='6'>Không có dữ liệu</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='8'>Không có dữ liệu</td></tr>";
             return;
         }
         data.forEach(item => {
             const date = item.prescriptionDate ? new Date(item.prescriptionDate).toLocaleDateString('vi-VN') : "";
             const row = `
-        <tr>
-            <td>
-                ${item.prescriptionId}
-                <br>
-                <a href="PrescriptionDetail.html?prescriptionId=${encodeURIComponent(item.prescriptionId)}&patientName=${encodeURIComponent(item.patientName)}">
-                    Xem chi tiết
-                </a>
-            </td>
-            <td>${item.patientName}</td>
-            <td>${item.doctorName}</td>
-            <td>${date}</td>
-            <td>
-                ${item.totalAmount?.toLocaleString("vi-VN") ?? 0}
-            </td>
-            <td>${item.status}</td>
-        </tr>
-    `;
+                    <tr>
+                        <td>${item.prescriptionId}</td>
+                        <td>${item.patientName}</td>
+                        <td>${date}</td>
+                        <td>${item.medicineName}</td>
+                        <td>${item.unitPrice?.toLocaleString("vi-VN") ?? 0}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.dosage || ""}</td>
+                        <td>${item.totalPrice?.toLocaleString("vi-VN") ?? 0}</td>
+                    </tr>
+                `;
             tbody.innerHTML += row;
         });
-
     }
 
-    // Tải danh sách ngay khi vừa vào trang
-    window.onload = () => fetchPrescriptions(true);
+    function getQueryParam(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name);
+    }
+    window.onload = () => {
+        const presId = getQueryParam("prescriptionId");
+        const patientName = getQueryParam("patientName");
+        if (presId) document.getElementById("search-pres-id").value = decodeURIComponent(presId);
+        if (patientName) document.getElementById("search-patient-name").value = decodeURIComponent(patientName);
+        // Nếu có ID hoặc tên, thì tìm luôn (lọc đúng)
+        if (presId || patientName) fetchDetails(false);
+        else fetchDetails(true);
+    };
 
     // Cho phép nhấn Enter để tìm kiếm nhanh
-    ["search-pres-id", "search-patient-name", "search-doctor-name"].forEach(id => {
+    ["search-pres-id", "search-patient-name"].forEach(id => {
         document.getElementById(id).addEventListener("keypress", function(e) {
-            if (e.key === "Enter") fetchPrescriptions();
+            if (e.key === "Enter") fetchDetails();
         });
     });
-    document.getElementById("search-status").addEventListener("change", function() { fetchPrescriptions(); });
-    document.getElementById("search-sort").addEventListener("change", function() { fetchPrescriptions(); });
+    document.getElementById("search-sort").addEventListener("change", function() { fetchDetails(); });
 </script>
 </body>
 </html>

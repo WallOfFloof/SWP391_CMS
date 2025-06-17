@@ -1,21 +1,19 @@
 package controller;
 
 import com.google.gson.Gson;
-import dao.PrescriptionViewDAO;
-import modelView.PrescriptionView;
-
-import com.google.gson.*;
+import dao.PrescriptionDetailViewDAO;
 import jakarta.servlet.ServletException;
+import modelView.PrescriptionDetailView;
+
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/api/prescription-views")
-public class PrescriptionViewServlet extends HttpServlet {
-    private final PrescriptionViewDAO prescriptionViewDAO = new PrescriptionViewDAO();
+@WebServlet("/api/prescription-detail-views")
+public class PrescriptionDetailViewServlet extends HttpServlet {
+    private final PrescriptionDetailViewDAO dao = new PrescriptionDetailViewDAO();
     private final Gson gson = new Gson();
-
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -30,15 +28,10 @@ public class PrescriptionViewServlet extends HttpServlet {
         String presIdStr = req.getParameter("prescriptionId");
         Integer presId = (presIdStr != null && !presIdStr.isEmpty()) ? Integer.parseInt(presIdStr) : null;
         String patientName = req.getParameter("patientName");
-        String doctorName = req.getParameter("doctorName");
-        String status = req.getParameter("status");
-        String sort = req.getParameter("sort");
+        String sort = req.getParameter("sort"); // "asc" hoặc "desc"
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
-        List<PrescriptionView> list = prescriptionViewDAO.searchPrescriptionViews(
-                presId, patientName, doctorName, status, sort
-        );
+        List<PrescriptionDetailView> list = dao.searchPrescriptionDetails(presId, patientName, sort);
         resp.getWriter().write(gson.toJson(list));
     }
-
 }
