@@ -1068,7 +1068,7 @@
                             <div>
                                 <h1 class="fs-37">
                                     <span class="left-text text-capitalize fw-light">Good morning, </span>
-                                    <span class="right-text text-capitalize">Dr. Christopher </span>
+                                    <span class="right-text text-capitalize">Manager </span>
                                 </h1>
                                 <p class="mb-5">Have a nice day at work. Progress is excellent!</p>
                                 <div class="d-flex align-items-center flex-wrap gap-3">
