@@ -20,7 +20,7 @@ public class Invoice {
         this.totalAmount = totalAmount;
         this.status = status;
     }
-
+//123
     // Constructor không có ID (cho trường hợp tạo mới, ID sẽ auto tăng)
     public Invoice(int patientId, int medicineRecordId, LocalDateTime issueDate, BigDecimal totalAmount, String status) {
         this.patientId = patientId;
