@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê doanh thu thuốc</title>
+    <style>
+        body { font-family: Arial; margin: 30px; }
+        h2 { margin-bottom: 20px; }
+        label { display: inline-block; min-width: 120px; }
+        input, select, button { margin-bottom: 10px; }
+        table { border-collapse: collapse; margin-top: 20px; width: 100%; }
+        th, td { border: 1px solid #333; padding: 6px 10px; text-align: center; }
+        th { background: #f1f1f1; }
+    </style>
+</head>
+<body>
+<h2>Thống kê doanh thu từng loại thuốc</h2>
+
+<!-- Form lọc -->
+<div>
+    <label>Từ ngày: <input type="date" id="from-date"></label>
+    <label>Đến ngày: <input type="date" id="to-date"></label>
+    <label>Sắp xếp:
+        <select id="sort-by">
+            <option value="quantity">Số lượng bán</option>
+            <option value="revenue">Doanh thu</option>
+        </select>
+    </label>
+    <button onclick="fetchStats()">Tìm kiếm</button>
+</div>
+
+<!-- Kết quả -->
+<table id="result-table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Tên thuốc</th>
+        <th>Đơn vị</th>
+        <th>Tổng số lượng bán</th>
+        <th>Tổng doanh thu</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- dữ liệu sẽ được render ở đây -->
+    </tbody>
+</table>
+
+<script>
+    const API_URL = "http://localhost:8080/ClinicManagementSystem_war_exploded/api/medicine-revenue-stat";
+
+    function fetchStats() {
+        // Lấy giá trị từ form
+        const fromDate = document.getElementById("from-date").value;
+        const toDate = document.getElementById("to-date").value;
+        const sortBy = document.getElementById("sort-by").value;
+
+        // Build query string
+        let params = [];
+        if (fromDate) params.push(`fromDate=${fromDate}`);
+        if (toDate) params.push(`toDate=${toDate}`);
+        if (sortBy) params.push(`sortBy=${sortBy}`);
+        const url = API_URL + (params.length > 0 ? "?" + params.join("&") : "");
+
+        fetch(url)
+            .then(async res => {
+                if (!res.ok) {
+                    let errText = res.status + ' ' + res.statusText;
+                    try {
+                        const j = await res.json();
+                        if (j.error) errText = j.error;
+                    } catch {}
+                    throw new Error(errText);
+                }
+                return res.json();
+            })
+            .then(data => renderTable(data))
+            .catch(err => alert("Không lấy được dữ liệu: " + err.message));
+
+    function renderTable(data) {
+        const tbody = document.querySelector("#result-table tbody");
+        tbody.innerHTML = "";
+        if (!data || data.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='5'>Không có dữ liệu</td></tr>";
+            return;
+        }
+        data.forEach((item, idx) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${item.medicineName}</td>
+            <td>${item.unit}</td>
+            <td>${item.totalQuantitySold}</td>
+            <td>${item.totalRevenue.toLocaleString("vi-VN")} đ</td>
+        `;
+            tbody.appendChild(tr);
+        });
+    }
+    }
+    window.addEventListener('load', () => {
+        const today = new Date().toISOString().substring(0,10);
+        document.getElementById('to-date').value = today;
+        let d = new Date();
+        d.setMonth(d.getMonth() - 1);
+        document.getElementById('from-date').value = d.toISOString().substring(0,10);
+        fetchStats();
+    });
+</script>
+</body>
+</html>

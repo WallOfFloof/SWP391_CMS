@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết sản phẩm thuốc</title>
+    <style>
+        body { font-family: Arial; margin: 30px; line-height: 1.6; background: #f8f9fa; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 900px; margin: auto; }
+        .product-header { display: flex; gap: 20px; }
+        .product-header img { width: 200px; height: auto; border: 1px solid #ccc; }
+        .product-info h2 { margin-top: 0; color: #0055a5; }
+        .price { font-size: 24px; font-weight: bold; color: #c00000; }
+        .old-price { text-decoration: line-through; color: gray; font-size: 16px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        td { padding: 8px 12px; border-bottom: 1px solid #ddd; }
+        td.label { font-weight: bold; width: 200px; background: #f0f0f0; }
+        .note { font-size: 13px; color: #666; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<div class="container" id="medicine-container">
+    <div>Đang tải dữ liệu...</div>
+</div>
+
+<script>
+    const API_URL = "http://localhost:8080/ClinicManagementSystem_war_exploded/api/medicine-view";
+
+    function getParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    function loadMedicineDetail() {
+        const id = getParam("id");
+        if (!id) return document.getElementById("medicine-container").innerHTML = "Thiếu ID thuốc.";
+
+        fetch(`${API_URL}?id=${id}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Không tìm thấy thuốc");
+                return res.json();
+            })
+            .then(data => renderMedicine(data))
+            .catch(err => {
+                document.getElementById("medicine-container").innerHTML = err.message;
+            });
+    }
+
+    function renderMedicine(med) {
+        document.getElementById("medicine-container").innerHTML = `
+    <div class="product-header">
+      <img src="${med.imageUrl}" alt="Medicine Image">
+      <div class="product-info">
+        <h2>${med.name}</h2>
+        <div>
+          <span class="price">${med.price.toLocaleString("vi-VN")}đ</span>
+        </div>
+        <div class="note">Đơn vị: <strong>${med.unitName ?? "-"}</strong></div>
+      </div>
+    </div>
+    <table>
+      <tr><td class="label">Danh mục</td><td>${med.categoryName ?? "-"}</td></tr>
+      <tr><td class="label">Thành phần</td><td>${med.ingredient ?? "-"}</td></tr>
+      <tr><td class="label">Cách dùng</td><td>${med.usage ?? "-"}</td></tr>
+      <tr><td class="label">Hạn sử dụng</td><td>${med.expiration ?? "-"}</td></tr>
+      <tr><td class="label">Nhà phân phối</td><td>${med.distributorName ?? "-"}</td></tr>
+      <tr><td class="label">Địa chỉ</td><td>${med.distributorAddress ?? "-"}</td></tr>
+      <tr><td class="label">Email</td><td>${med.distributorEmail ?? "-"}</td></tr>
+      <tr><td class="label">SĐT</td><td>${med.distributorPhone ?? "-"}</td></tr>
+    </table>
+    <div class="note">Mẫu mã sản phẩm có thể thay đổi theo lô hàng.</div>
+  `;
+    }
+
+    window.onload = loadMedicineDetail;
+</script>
+</body>
+</html>
