@@ -9,45 +9,43 @@ import java.time.LocalDate;
  * @author admin
  */
 public class Medicine {
-    private int ID; 
-    private String name;
-    private int categoryID;
-    private int amount;
-    private float price;
-    private String Ingredient;
-    private String Usage; 
-    private String Preservation; 
-    private LocalDate expiration_date;
-    private LocalDate manufacture_date;
-    private int quantity;
-    private int unitID;
-    private int warehouseID;
-    
+    public int medicine_id;
+    public String name;
+    public int unit_id;
+    public int category_id;
+    public String ingredient;
+    public String usage;
+    public String preservation;
+    public LocalDate manuDate;
+    public LocalDate expDate;
+    public int quantity;
+    public float price;
+    public int warehouse_id;
+
     public Medicine() {
     }
 
-    public Medicine(int ID, String name, int categoryID, int amount, float price, String Ingredient, String Usage, String Preservation, LocalDate expiration_date, LocalDate manufacture_date, int quantity, int unitID, int warehouseID) {
-        this.ID = ID;
+    public Medicine(int medicine_id, String name, int unit_id, int category_id, String ingredient, String usage, String preservation, LocalDate manuDate, LocalDate expDate, int quantity, float price, int warehouse_id) {
+        this.medicine_id = medicine_id;
         this.name = name;
-        this.categoryID = categoryID;
-        this.amount = amount;
-        this.price = price;
-        this.Ingredient = Ingredient;
-        this.Usage = Usage;
-        this.Preservation = Preservation;
-        this.expiration_date = expiration_date;
-        this.manufacture_date = manufacture_date;
+        this.unit_id = unit_id;
+        this.category_id = category_id;
+        this.ingredient = ingredient;
+        this.usage = usage;
+        this.preservation = preservation;
+        this.manuDate = manuDate;
+        this.expDate = expDate;
         this.quantity = quantity;
-        this.unitID = unitID;
-        this.warehouseID = warehouseID;
+        this.price = price;
+        this.warehouse_id = warehouse_id;
     }
 
-    public int getID() {
-        return ID;
+    public int getMedicine_id() {
+        return medicine_id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setMedicine_id(int medicine_id) {
+        this.medicine_id = medicine_id;
     }
 
     public String getName() {
@@ -58,68 +56,60 @@ public class Medicine {
         this.name = name;
     }
 
-    public int getCategoryID() {
-        return categoryID;
+    public int getUnit_id() {
+        return unit_id;
     }
 
-    public void setCategoryID(int categoryID) {
-        this.categoryID = categoryID;
+    public void setUnit_id(int unit_id) {
+        this.unit_id = unit_id;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getCategory_id() {
+        return category_id;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
+    public void setCategory_id(int category_id) {
+        this.category_id = category_id;
     }
 
     public String getIngredient() {
-        return Ingredient;
+        return ingredient;
     }
 
-    public void setIngredient(String Ingredient) {
-        this.Ingredient = Ingredient;
+    public void setIngredient(String ingredient) {
+        this.ingredient = ingredient;
     }
 
     public String getUsage() {
-        return Usage;
+        return usage;
     }
 
-    public void setUsage(String Usage) {
-        this.Usage = Usage;
+    public void setUsage(String usage) {
+        this.usage = usage;
     }
 
     public String getPreservation() {
-        return Preservation;
+        return preservation;
     }
 
-    public void setPreservation(String Preservation) {
-        this.Preservation = Preservation;
+    public void setPreservation(String preservation) {
+        this.preservation = preservation;
     }
 
-    public LocalDate getExpiration_date() {
-        return expiration_date;
+    public LocalDate getManuDate() {
+        return manuDate;
     }
 
-    public void setExpiration_date(LocalDate expiration_date) {
-        this.expiration_date = expiration_date;
+    public void setManuDate(LocalDate manuDate) {
+        this.manuDate = manuDate;
     }
 
-    public LocalDate getManufacture_date() {
-        return manufacture_date;
+    public LocalDate getExpDate() {
+        return expDate;
     }
 
-    public void setManufacture_date(LocalDate manufacture_date) {
-        this.manufacture_date = manufacture_date;
+    public void setExpDate(LocalDate expDate) {
+        this.expDate = expDate;
     }
 
     public int getQuantity() {
@@ -130,26 +120,22 @@ public class Medicine {
         this.quantity = quantity;
     }
 
-    public int getUnitID() {
-        return unitID;
+    public float getPrice() {
+        return price;
     }
 
-    public void setUnitID(int unitID) {
-        this.unitID = unitID;
+    public void setPrice(float price) {
+        this.price = price;
     }
 
-    public int getWarehouseID() {
-        return warehouseID;
+    public int getWarehouse_id() {
+        return warehouse_id;
     }
 
-    public void setWarehouseID(int warehouseID) {
-        this.warehouseID = warehouseID;
+    public void setWarehouse_id(int warehouse_id) {
+        this.warehouse_id = warehouse_id;
     }
-    
-    
 
-    
-    
     public boolean dateChecker(LocalDate manufacture_date, LocalDate expiration_date, LocalDate import_date){
         if (manufacture_date.isAfter(expiration_date)){
             System.out.println("Invalid date");

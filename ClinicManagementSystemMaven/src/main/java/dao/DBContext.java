@@ -28,8 +28,8 @@ public class DBContext {
         try {
             if (connection == null || connection.isClosed()) {
                 String user = "sa";
-                String password = "123";
-                String url = "jdbc:sqlserver://localhost:1433;databaseName=   //ToDo: insert db name here       ";
+                String password = "12345";
+                String url = "jdbc:sqlserver://localhost:1433;databaseName=HealthCareSystem;encrypt=true;trustServerCertificate=true";
                 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
                 connection = DriverManager.getConnection(url, user, password);
             }
