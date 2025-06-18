@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo Đơn Thuốc</title>
+    <style>
+        body { font-family: Arial; margin: 30px; }
+        label { display: block; margin-top: 10px; }
+        input, button { margin: 4px 0; }
+        table, th, td { border: 1px solid #333; border-collapse: collapse; }
+        th, td { padding: 5px 10px; }
+    </style>
+</head>
+<body>
+<h2>Tạo Đơn Thuốc (cho bệnh nhân đã có ID)</h2>
+<form id="prescription-form" onsubmit="submitPrescription(event)">
+    <label>ID bệnh nhân: <input id="patientId" type="number" required></label>
+    <label>ID bác sĩ: <input id="doctorId" type="number" required></label>
+    <label>ID dược sĩ: <input id="pharmacistId" type="number" required></label>
+
+    <h4>Thêm thuốc vào đơn:</h4>
+    <table id="medicines-table">
+        <thead>
+        <tr>
+            <th>ID thuốc</th>
+            <th>Số lượng</th>
+            <th>Liều dùng</th>
+            <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody id="medicines-tbody"></tbody>
+    </table>
+    <button type="button" onclick="addMedicineRow()">+ Thêm thuốc</button>
+    <br><br>
+    <button type="button" onclick="createPrescription()">Tạo đơn thuốc</button>
+</form>
+<div id="result" style="margin-top: 20px; font-weight: bold;"></div>
+
+<script>
+    const API_URL = "http://localhost:8080/ClinicManagementSystem_war_exploded/api/prescriptions";
+
+    function createPrescription() {
+        document.getElementById("result").innerText = "";
+
+        const patientId = parseInt(document.getElementById("patientId").value);
+        const doctorId = parseInt(document.getElementById("doctorId").value);
+        const pharmacistId = parseInt(document.getElementById("pharmacistId").value);
+
+        if (isNaN(patientId) || isNaN(doctorId) || isNaN(pharmacistId)) {
+            document.getElementById("result").innerText = "Vui lòng nhập đủ ID bệnh nhân, bác sĩ, dược sĩ.";
+            return;
+        }
+
+        const medicines = [];
+        document.querySelectorAll("#medicines-tbody tr").forEach(row => {
+            const medId = parseInt(row.querySelector(".medicine-id").value);
+            const quantity = parseInt(row.querySelector(".medicine-qty").value);
+            const dosage = row.querySelector(".medicine-dosage").value;
+            if (!isNaN(medId) && !isNaN(quantity) && dosage.trim() !== "") {
+                medicines.push({ medicineId: medId, quantity: quantity, dosage: dosage.trim() });
+            }
+        });
+
+        if (medicines.length === 0) {
+            document.getElementById("result").innerText = "Phải có ít nhất một thuốc trong đơn!";
+            return;
+        }
+
+        const payload = {
+            patientId,
+            doctorId,
+            pharmacistId,
+            medicines
+        };
+
+        fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("API error");
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById("result").style.color = "green";
+                document.getElementById("result").innerText = "Tạo đơn thành công! ID đơn thuốc: " + data.prescriptionId;
+            })
+            .catch(err => {
+                document.getElementById("result").style.color = "red";
+                document.getElementById("result").innerText = "Tạo đơn thất bại: " + err.message;
+            });
+    }
+
+    function addMedicineRow() {
+        const tbody = document.getElementById("medicines-tbody");
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><input type="number" class="medicine-id" required></td>
+            <td><input type="number" class="medicine-qty" required></td>
+            <td><input type="text" class="medicine-dosage" required></td>
+            <td><button type="button" onclick="this.closest('tr').remove()">Xóa</button></td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    // Auto tạo 1 dòng thuốc mặc định
+    window.onload = () => {
+        addMedicineRow();
+    };
+</script>
+
+</body>
+</html>
