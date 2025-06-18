@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.Medicine;
-import dao.warehouseDAO;
+import dao.WarehouseDAO;
 
 
 import java.io.BufferedReader;
@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/api/medicine")
-public class warehouseServlet extends HttpServlet {
-    private warehouseDAO dao = new  warehouseDAO();
+public class WarehouseServlet extends HttpServlet {
+    private WarehouseDAO dao = new WarehouseDAO();
     private Gson gson = new Gson();
 
     @Override

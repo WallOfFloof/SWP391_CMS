@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class warehouseDAO {
+public class WarehouseDAO {
     public boolean addMedicine(Medicine med) {
         String sql = "INSERT INTO Medicine (medicine_id, name, unit_id, category_id, ingredient, usage, preservation, manuDate, expDate, quantity, price, warehouse_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBContext.getInstance().getConnection();
